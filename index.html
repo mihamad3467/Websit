@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dev &amp; Gamer Toolkit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --bg-deep:#070b14;
+  --bg-panel:#0e1526;
+  --bg-panel-2:#141d33;
+  --bg-panel-3:#1a2540;
+  --line:#232f4d;
+  --cyan:#2be3ff;
+  --cyan-dim:#1aa8c2;
+  --violet:#9b5cff;
+  --violet-dim:#6b3fc9;
+  --text-hi:#eef2ff;
+  --text-mid:#aab4d4;
+  --text-low:#6b769a;
+  --ok:#3ee89a;
+  --danger:#ff5c7a;
+  --radius:16px;
+  --radius-sm:10px;
+  --font-display:'Sora',sans-serif;
+  --font-body:'Inter',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:
+    radial-gradient(1100px 600px at 12% -10%, rgba(43,227,255,.14), transparent 60%),
+    radial-gradient(900px 700px at 110% 10%, rgba(155,92,255,.16), transparent 55%),
+    var(--bg-deep);
+  color:var(--text-hi);
+  font-family:var(--font-body);
+  min-height:100vh;
+  line-height:1.5;
+}
+::selection{background:rgba(43,227,255,.3);}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+input{font-family:inherit;}
+a{color:inherit;text-decoration:none;}
+::-webkit-scrollbar{width:10px;}
+::-webkit-scrollbar-track{background:var(--bg-deep);}
+::-webkit-scrollbar-thumb{background:var(--bg-panel-3);border-radius:10px;}
+
+/* ============ LOGO ============ */
+.logo-mark{
+  width:34px;height:34px;flex-shrink:0;
+  filter:drop-shadow(0 0 6px rgba(43,227,255,.5));
+}
+.logo-wrap{display:flex;align-items:center;gap:10px;}
+.logo-text{
+  font-family:var(--font-display);font-weight:800;font-size:19px;letter-spacing:.2px;
+}
+.logo-text .accent{
+  background:linear-gradient(90deg,var(--cyan),var(--violet));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+
+/* ============ AUTH GATE ============ */
+#authGate{
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:32px 20px;
+  position:relative;
+  overflow:hidden;
+}
+#authGate::before, #authGate::after{
+  content:"";position:absolute;width:340px;height:340px;border-radius:50%;
+  filter:blur(90px);opacity:.35;z-index:0;
+}
+#authGate::before{background:var(--cyan);top:-120px;left:-80px;}
+#authGate::after{background:var(--violet);bottom:-140px;right:-80px;}
+
+.auth-card{
+  position:relative;z-index:1;
+  width:100%;max-width:420px;
+  background:linear-gradient(180deg, var(--bg-panel-2), var(--bg-panel));
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:36px 32px;
+  box-shadow:0 0 0 1px rgba(43,227,255,.05), 0 30px 80px -20px rgba(0,0,0,.7);
+}
+.auth-card::before{
+  content:"";position:absolute;inset:-1px;border-radius:20px;padding:1px;
+  background:linear-gradient(135deg, rgba(43,227,255,.5), transparent 30%, transparent 70%, rgba(155,92,255,.5));
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude;
+  pointer-events:none;
+}
+.auth-head{text-align:center;margin-bottom:26px;}
+.auth-head .logo-wrap{justify-content:center;margin-bottom:14px;}
+.auth-head h1{font-family:var(--font-display);font-size:20px;font-weight:700;}
+.auth-head p{color:var(--text-low);font-size:13px;margin-top:4px;}
+
+.field-label{font-size:13px;color:var(--text-mid);margin-bottom:8px;display:block;}
+.field{
+  width:100%;background:var(--bg-deep);border:1px solid var(--line);
+  border-radius:var(--radius-sm);padding:13px 14px;color:var(--text-hi);
+  font-size:14px;outline:none;transition:border-color .15s, box-shadow .15s;
+}
+.field:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(43,227,255,.12);}
+.field::placeholder{color:var(--text-low);}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:13px 16px;border-radius:var(--radius-sm);
+  font-weight:600;font-size:14px;transition:transform .15s, box-shadow .15s, opacity .15s;
+}
+.btn-primary{
+  background:linear-gradient(90deg,var(--cyan),var(--cyan-dim) 120%);
+  color:#04141a;
+  box-shadow:0 8px 24px -8px rgba(43,227,255,.55);
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 28px -8px rgba(43,227,255,.7);}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-ghost{
+  background:transparent;border:1px solid var(--line);color:var(--text-mid);
+}
+.btn-ghost:hover{border-color:var(--cyan-dim);color:var(--text-hi);}
+
+.auth-step{margin-top:18px;}
+.otp-row{display:flex;gap:8px;direction:ltr;justify-content:center;margin:18px 0 10px;}
+.otp-digit{
+  width:48px;height:56px;text-align:center;font-family:var(--font-mono);font-size:22px;font-weight:700;
+  background:var(--bg-deep);border:1px solid var(--line);border-radius:12px;color:var(--text-hi);
+  outline:none;transition:border-color .15s, box-shadow .15s;
+}
+.otp-digit:focus{border-color:var(--violet);box-shadow:0 0 0 3px rgba(155,92,255,.15);}
+.otp-hint{
+  text-align:center;font-size:12.5px;color:var(--text-low);margin-bottom:16px;
+}
+.otp-hint b{color:var(--ok);font-family:var(--font-mono);letter-spacing:1px;}
+.auth-toast{
+  margin-top:14px;font-size:12.5px;text-align:center;color:var(--text-mid);
+  min-height:16px;
+}
+.auth-error{color:var(--danger)!important;}
+.resend-link{
+  display:block;text-align:center;margin-top:12px;font-size:12.5px;color:var(--cyan);
+}
+.resend-link:hover{text-decoration:underline;}
+.back-link{
+  display:block;text-align:center;margin-top:14px;font-size:12.5px;color:var(--text-low);
+}
+
+/* ============ APP SHELL ============ */
+#app{display:none;min-height:100vh;}
+#app.active{display:block;}
+header.topbar{
+  position:sticky;top:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;
+  background:rgba(7,11,20,.85);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav-links{display:flex;gap:26px;align-items:center;}
+.nav-links a{font-size:13.5px;color:var(--text-mid);font-weight:500;transition:color .15s;}
+.nav-links a:hover, .nav-links a.active{color:var(--cyan);}
+.user-chip{
+  display:flex;align-items:center;gap:10px;
+  font-size:12.5px;color:var(--text-mid);
+}
+.user-chip .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);}
+.logout-btn{color:var(--danger);font-size:12.5px;font-weight:600;padding:6px 10px;border-radius:8px;transition:background .15s;}
+.logout-btn:hover{background:rgba(255,92,122,.1);}
+
+.hero{
+  text-align:center;padding:56px 20px 36px;position:relative;
+}
+.hero .logo-wrap{justify-content:center;margin-bottom:14px;}
+.hero .logo-mark{width:44px;height:44px;}
+.hero h1{font-family:var(--font-display);font-size:clamp(28px,4vw,42px);font-weight:800;}
+.hero p{color:var(--text-low);margin-top:8px;font-size:15px;}
+
+main{max-width:1180px;margin:0 auto;padding:0 24px 80px;}
+
+.section-title{
+  font-family:var(--font-display);font-size:13px;letter-spacing:1.5px;
+  color:var(--text-low);text-transform:uppercase;margin:36px 0 16px;
+}
+
+.tool-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;
+}
+.tool-card{
+  background:linear-gradient(180deg,var(--bg-panel-2),var(--bg-panel));
+  border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px;text-align:right;
+  transition:transform .18s, border-color .18s, box-shadow .18s;
+  position:relative;overflow:hidden;
+}
+.tool-card:hover{transform:translateY(-3px);border-color:var(--cyan-dim);box-shadow:0 16px 40px -18px rgba(43,227,255,.35);}
+.tool-card.active{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 16px 40px -18px rgba(43,227,255,.5);}
+.tool-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg, rgba(43,227,255,.15), rgba(155,92,255,.15));
+  margin-bottom:14px;font-size:20px;
+}
+.tool-card h3{font-family:var(--font-display);font-size:16px;font-weight:700;margin-bottom:6px;}
+.tool-card p{font-size:12.5px;color:var(--text-low);line-height:1.5;}
+
+.panel{
+  display:none;
+  margin-top:28px;
+  background:linear-gradient(180deg,var(--bg-panel-2),var(--bg-panel));
+  border:1px solid var(--line);border-radius:20px;
+  padding:28px;
+}
+.panel.active{display:block;animation:panelIn .25s ease;}
+@keyframes panelIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
+.panel-head h2{font-family:var(--font-display);font-size:19px;font-weight:700;}
+.close-panel{color:var(--text-low);font-size:13px;padding:6px 12px;border:1px solid var(--line);border-radius:8px;transition:color .15s,border-color .15s;}
+.close-panel:hover{color:var(--text-hi);border-color:var(--cyan-dim);}
+
+/* ---- Password generator ---- */
+.pw-display{
+  display:flex;gap:10px;align-items:center;margin-bottom:22px;
+}
+.pw-output{
+  flex:1;background:var(--bg-deep);border:1px solid var(--line);border-radius:12px;
+  padding:16px;font-family:var(--font-mono);font-size:16px;letter-spacing:1px;
+  color:var(--cyan);overflow-x:auto;white-space:nowrap;direction:ltr;text-align:left;
+}
+.icon-btn{
+  width:48px;height:48px;flex-shrink:0;border-radius:12px;border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--text-mid);
+  transition:border-color .15s,color .15s,background .15s;
+}
+.icon-btn:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(43,227,255,.06);}
+.control-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;font-size:13.5px;color:var(--text-mid);}
+input[type=range]{width:100%;accent-color:var(--cyan);height:4px;}
+.range-row{margin-bottom:18px;}
+.toggle-row{display:flex;flex-wrap:wrap;gap:22px;margin-bottom:22px;}
+.toggle{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--text-mid);}
+.switch{position:relative;width:40px;height:22px;flex-shrink:0;}
+.switch input{opacity:0;width:0;height:0;}
+.slider-toggle{
+  position:absolute;inset:0;background:var(--bg-panel-3);border-radius:22px;
+  transition:.2s;border:1px solid var(--line);
+}
+.slider-toggle::before{
+  content:"";position:absolute;width:16px;height:16px;left:2px;top:2px;
+  background:var(--text-low);border-radius:50%;transition:.2s;
+}
+.switch input:checked + .slider-toggle{background:linear-gradient(90deg,var(--cyan-dim),var(--cyan));border-color:transparent;}
+.switch input:checked + .slider-toggle::before{transform:translateX(-18px);background:#04141a;}
+
+/* ---- Color picker ---- */
+.color-tool{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;}
+.color-swatch-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.color-swatch{
+  width:150px;height:150px;border-radius:20px;border:1px solid var(--line);
+  box-shadow:inset 0 0 0 6px rgba(255,255,255,.03);
+}
+input[type=color]{width:150px;height:44px;border:1px solid var(--line);border-radius:10px;background:none;cursor:pointer;}
+.color-values{flex:1;min-width:220px;display:flex;flex-direction:column;gap:12px;}
+.value-row{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--bg-deep);border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+}
+.value-row .label{font-size:12px;color:var(--text-low);text-transform:uppercase;letter-spacing:1px;}
+.value-row .val{font-family:var(--font-mono);font-size:14px;color:var(--text-hi);direction:ltr;}
+.value-row button{color:var(--text-low);font-size:12px;}
+.value-row button:hover{color:var(--cyan);}
+
+/* ---- Todo ---- */
+.todo-input-row{display:flex;gap:10px;margin-bottom:20px;}
+.todo-input-row .field{flex:1;}
+.todo-list{display:flex;flex-direction:column;gap:8px;}
+.todo-item{
+  display:flex;align-items:center;gap:12px;
+  background:var(--bg-deep);border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+}
+.todo-check{
+  width:20px;height:20px;border-radius:6px;border:1px solid var(--line);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;color:var(--bg-deep);font-size:12px;
+  transition:background .15s,border-color .15s;
+}
+.todo-check.done{background:var(--ok);border-color:var(--ok);}
+.todo-text{flex:1;font-size:14px;}
+.todo-text.done{color:var(--text-low);text-decoration:line-through;}
+.todo-del{color:var(--text-low);font-size:15px;}
+.todo-del:hover{color:var(--danger);}
+.todo-empty{text-align:center;color:var(--text-low);font-size:13px;padding:24px 0;}
+
+/* ---- Decision maker ---- */
+.dm-input-row{display:flex;gap:10px;margin-bottom:14px;}
+.dm-input-row .field{flex:1;}
+.dm-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;min-height:20px;}
+.dm-chip{
+  display:flex;align-items:center;gap:8px;
+  background:var(--bg-panel-3);border:1px solid var(--line);border-radius:20px;
+  padding:7px 8px 7px 14px;font-size:13px;
+}
+.dm-chip button{color:var(--text-low);font-size:14px;}
+.dm-chip button:hover{color:var(--danger);}
+.dm-wheel-btn{width:100%;padding:16px;}
+.dm-result{
+  margin-top:22px;text-align:center;padding:26px;border-radius:16px;
+  background:linear-gradient(135deg, rgba(43,227,255,.08), rgba(155,92,255,.08));
+  border:1px solid var(--line);display:none;
+}
+.dm-result.show{display:block;animation:panelIn .3s ease;}
+.dm-result .label{font-size:12px;color:var(--text-low);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;}
+.dm-result .pick{font-family:var(--font-display);font-size:26px;font-weight:800;color:var(--cyan);}
+
+footer{
+  text-align:center;padding:30px 20px;color:var(--text-low);font-size:12px;border-top:1px solid var(--line);
+}
+
+@media (max-width:640px){
+  .topbar{padding:12px 16px;}
+  .nav-links{display:none;}
+  main{padding:0 14px 60px;}
+  .color-tool{gap:16px;}
+  .auth-card{padding:28px 22px;}
+  .otp-digit{width:42px;height:52px;font-size:19px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ AUTH GATE ============ -->
+<div id="authGate">
+  <div class="auth-card">
+    <div class="auth-head">
+      <div class="logo-wrap">
+        <svg class="logo-mark" viewBox="0 0 48 48" fill="none">
+          <path d="M18 6h4v6h4V6h4v6h4a2 2 0 012 2v4h6v4h-6v4a2 2 0 01-2 2h-4v6h-4v-6h-4v6h-4v-6h-4a2 2 0 01-2-2v-4H6v-4h6v-4a2 2 0 012-2h4V6z"
+                stroke="url(#g1)" stroke-width="2" stroke-linejoin="round"/>
+          <defs><linearGradient id="g1" x1="6" y1="6" x2="42" y2="42">
+            <stop stop-color="#2be3ff"/><stop offset="1" stop-color="#9b5cff"/>
+          </linearGradient></defs>
+        </svg>
+        <div class="logo-text">Dev &amp; <span class="accent">Gamer</span> Toolkit</div>
+      </div>
+      <h1 id="authHeadline">تسجيل الدخول عبر البريد الإلكتروني</h1>
+      <p id="authSub">أدخل بريدك للحصول على رمز تحقق فوري</p>
+    </div>
+
+    <!-- step 1: email -->
+    <div class="auth-step" id="stepEmail">
+      <label class="field-label">البريد الإلكتروني</label>
+      <input type="email" id="emailInput" class="field" placeholder="you@example.com" autocomplete="email">
+      <button class="btn btn-primary" id="sendCodeBtn" style="margin-top:14px;">إرسال رمز التحقق</button>
+      <div class="auth-toast" id="emailError"></div>
+    </div>
+
+    <!-- step 2: otp -->
+    <div class="auth-step" id="stepOtp" style="display:none;">
+      <label class="field-label" style="text-align:center;display:block;">أدخل الرمز المكوّن من 6 أرقام</label>
+      <div class="otp-row" id="otpRow">
+        <input class="otp-digit" maxlength="1" inputmode="numeric" data-i="0">
+        <input class="otp-digit" maxlength="1" inputmode="numeric" data-i="1">
+        <input class="otp-digit" maxlength="1" inputmode="numeric" data-i="2">
+        <input class="otp-digit" maxlength="1" inputmode="numeric" data-i="3">
+        <input class="otp-digit" maxlength="1" inputmode="numeric" data-i="4">
+        <input class="otp-digit" maxlength="1" inputmode="numeric" data-i="5">
+      </div>
+      <div class="otp-hint">تم إرسال رمز تجريبي (محاكاة) — الرمز: <b id="demoCode">------</b></div>
+      <button class="btn btn-primary" id="verifyBtn">تحقق وادخل إلى الأدوات</button>
+      <div class="auth-toast" id="otpError"></div>
+      <a class="resend-link" id="resendLink">إعادة إرسال الرمز</a>
+      <a class="back-link" id="backLink">‹ تعديل البريد الإلكتروني</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+  <header class="topbar">
+    <div class="logo-wrap">
+      <svg class="logo-mark" viewBox="0 0 48 48" fill="none">
+        <path d="M18 6h4v6h4V6h4v6h4a2 2 0 012 2v4h6v4h-6v4a2 2 0 01-2 2h-4v6h-4v-6h-4v6h-4v-6h-4a2 2 0 01-2-2v-4H6v-4h6v-4a2 2 0 012-2h4V6z"
+              stroke="url(#g2)" stroke-width="2" stroke-linejoin="round"/>
+        <defs><linearGradient id="g2" x1="6" y1="6" x2="42" y2="42">
+          <stop stop-color="#2be3ff"/><stop offset="1" stop-color="#9b5cff"/>
+        </linearGradient></defs>
+      </svg>
+      <div class="logo-text">Dev &amp; <span class="accent">Gamer</span> Toolkit</div>
+    </div>
+    <nav class="nav-links">
+      <a href="#tools">الأدوات</a>
+      <a href="#" id="scrollTop">الرئيسية</a>
+    </nav>
+    <div class="user-chip">
+      <span class="dot"></span>
+      <span id="userEmailChip"></span>
+      <button class="logout-btn" id="logoutBtn">تسجيل الخروج</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="logo-wrap">
+      <svg class="logo-mark" viewBox="0 0 48 48" fill="none">
+        <path d="M18 6h4v6h4V6h4v6h4a2 2 0 012 2v4h6v4h-6v4a2 2 0 01-2 2h-4v6h-4v-6h-4v6h-4v-6h-4a2 2 0 01-2-2v-4H6v-4h6v-4a2 2 0 012-2h4V6z"
+              stroke="url(#g3)" stroke-width="2" stroke-linejoin="round"/>
+        <defs><linearGradient id="g3" x1="6" y1="6" x2="42" y2="42">
+          <stop stop-color="#2be3ff"/><stop offset="1" stop-color="#9b5cff"/>
+        </linearGradient></defs>
+      </svg>
+    </div>
+    <h1>Dev &amp; Gamer Toolkit</h1>
+    <p>مجموعة أدوات سريعة للمطورين واللاعبين — كل شيء في مكان واحد</p>
+  </section>
+
+  <main id="tools">
+    <div class="section-title">الأدوات المتاحة</div>
+    <div class="tool-grid" id="toolGrid">
+      <button class="tool-card" data-tool="pw">
+        <div class="tool-icon">🔐</div>
+        <h3>مولد كلمات المرور</h3>
+        <p>أنشئ كلمة مرور قوية بطول وخصائص مخصصة، مع نسخ سريع.</p>
+      </button>
+      <button class="tool-card" data-tool="color">
+        <div class="tool-icon">🎨</div>
+        <h3>فاحص ومحول الألوان</h3>
+        <p>اختر لوناً واحصل فوراً على كود HEX و RGB الخاص به.</p>
+      </button>
+      <button class="tool-card" data-tool="todo">
+        <div class="tool-icon">✅</div>
+        <h3>قائمة المهام</h3>
+        <p>أضف مهامك، علّمها كمنجزة، وتُحفظ تلقائياً في متصفحك.</p>
+      </button>
+      <button class="tool-card" data-tool="dm">
+        <div class="tool-icon">🎲</div>
+        <h3>صانع القرارات</h3>
+        <p>لا تقدر تقرر؟ اكتب خياراتك ودع النظام يختار لك عشوائياً.</p>
+      </button>
+    </div>
+
+    <!-- Password Generator Panel -->
+    <div class="panel" id="panel-pw">
+      <div class="panel-head"><h2>🔐 مولد كلمات المرور</h2><button class="close-panel" data-close>إغلاق ✕</button></div>
+      <div class="pw-display">
+        <div class="pw-output" id="pwOutput">••••••••••••</div>
+        <button class="icon-btn" id="pwCopy" title="نسخ">📋</button>
+        <button class="icon-btn" id="pwRefresh" title="توليد جديد">🔄</button>
+      </div>
+      <div class="range-row">
+        <div class="control-row"><span>طول كلمة المرور</span><span id="pwLenLabel">16</span></div>
+        <input type="range" id="pwLength" min="4" max="48" value="16">
+      </div>
+      <div class="toggle-row">
+        <label class="toggle"><span class="switch"><input type="checkbox" id="pwUpper" checked><span class="slider-toggle"></span></span> أحرف كبيرة (A-Z)</label>
+        <label class="toggle"><span class="switch"><input type="checkbox" id="pwNumbers" checked><span class="slider-toggle"></span></span> أرقام (0-9)</label>
+        <label class="toggle"><span class="switch"><input type="checkbox" id="pwSymbols" checked><span class="slider-toggle"></span></span> رموز (!@#$)</label>
+      </div>
+      <button class="btn btn-primary" id="pwGenerate">توليد كلمة مرور جديدة</button>
+    </div>
+
+    <!-- Color Picker Panel -->
+    <div class="panel" id="panel-color">
+      <div class="panel-head"><h2>🎨 فاحص ومحول الألوان</h2><button class="close-panel" data-close>إغلاق ✕</button></div>
+      <div class="color-tool">
+        <div class="color-swatch-wrap">
+          <div class="color-swatch" id="colorSwatch" style="background:#2be3ff;"></div>
+          <input type="color" id="colorInput" value="#2be3ff">
+        </div>
+        <div class="color-values">
+          <div class="value-row"><span class="label">HEX</span><span class="val" id="valHex">#2BE3FF</span><button data-copy="valHex">نسخ</button></div>
+          <div class="value-row"><span class="label">RGB</span><span class="val" id="valRgb">rgb(43,227,255)</span><button data-copy="valRgb">نسخ</button></div>
+          <div class="value-row"><span class="label">HSL</span><span class="val" id="valHsl">hsl(187,100%,58%)</span><button data-copy="valHsl">نسخ</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Todo Panel -->
+    <div class="panel" id="panel-todo">
+      <div class="panel-head"><h2>✅ قائمة المهام</h2><button class="close-panel" data-close>إغلاق ✕</button></div>
+      <div class="todo-input-row">
+        <input type="text" class="field" id="todoInput" placeholder="اكتب مهمة جديدة...">
+        <button class="btn btn-primary" id="todoAdd" style="width:auto;padding:13px 22px;">إضافة</button>
+      </div>
+      <div class="todo-list" id="todoList"></div>
+    </div>
+
+    <!-- Decision Maker Panel -->
+    <div class="panel" id="panel-dm">
+      <div class="panel-head"><h2>🎲 صانع القرارات</h2><button class="close-panel" data-close>إغلاق ✕</button></div>
+      <div class="dm-input-row">
+        <input type="text" class="field" id="dmInput" placeholder="أضف خياراً واضغط إدخال...">
+        <button class="btn btn-primary" id="dmAdd" style="width:auto;padding:13px 22px;">إضافة</button>
+      </div>
+      <div class="dm-chips" id="dmChips"></div>
+      <button class="btn btn-primary dm-wheel-btn" id="dmSpin">🎲 اختر لي!</button>
+      <div class="dm-result" id="dmResult">
+        <div class="label">الاختيار</div>
+        <div class="pick" id="dmPick">—</div>
+      </div>
+    </div>
+  </main>
+
+  <footer>Dev &amp; Gamer Toolkit — مشروع تجريبي محلي، لا يتصل بأي خادم بريد فعلي.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     AUTH — Email OTP simulation
+     ============================================================ */
+  const SESSION_KEY = "dgt_session";
+  let pendingEmail = "";
+  let pendingCode = "";
+
+  const authGate   = document.getElementById("authGate");
+  const app        = document.getElementById("app");
+  const stepEmail  = document.getElementById("stepEmail");
+  const stepOtp    = document.getElementById("stepOtp");
+  const emailInput = document.getElementById("emailInput");
+  const emailError = document.getElementById("emailError");
+  const otpError   = document.getElementById("otpError");
+  const demoCode   = document.getElementById("demoCode");
+  const otpInputs  = Array.from(document.querySelectorAll(".otp-digit"));
+
+  function isValidEmail(v){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  }
+  function genCode(){
+    return String(Math.floor(100000 + Math.random()*900000));
+  }
+
+  function sendCode(){
+    const email = emailInput.value.trim();
+    emailError.textContent = "";
+    if(!isValidEmail(email)){
+      emailError.textContent = "الرجاء إدخال بريد إلكتروني صحيح.";
+      emailError.classList.add("auth-error");
+      return;
+    }
+    pendingEmail = email;
+    pendingCode = genCode();
+    console.log("%c[Dev & Gamer Toolkit] رمز التحقق التجريبي: " + pendingCode, "color:#2be3ff;font-weight:bold;font-size:14px;");
+    demoCode.textContent = pendingCode;
+    document.getElementById("authHeadline").textContent = "تحقق من بريدك";
+    document.getElementById("authSub").textContent = "أرسلنا رمزاً إلى " + email;
+    stepEmail.style.display = "none";
+    stepOtp.style.display = "block";
+    otpInputs.forEach(i => i.value = "");
+    otpInputs[0].focus();
+  }
+
+  function collectOtp(){
+    return otpInputs.map(i => i.value).join("");
+  }
+
+  function verifyCode(){
+    otpError.textContent = "";
+    const entered = collectOtp();
+    if(entered.length < 6){
+      otpError.textContent = "الرجاء إدخال الرمز كاملاً (6 أرقام).";
+      otpError.classList.add("auth-error");
+      return;
+    }
+    if(entered !== pendingCode){
+      otpError.textContent = "الرمز غير صحيح، حاول مجدداً.";
+      otpError.classList.add("auth-error");
+      otpInputs.forEach(i => i.value = "");
+      otpInputs[0].focus();
+      return;
+    }
+    // success
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ email: pendingEmail, ts: Date.now() }));
+    enterApp(pendingEmail);
+  }
+
+  function enterApp(email){
+    authGate.style.display = "none";
+    app.classList.add("active");
+    document.getElementById("userEmailChip").textContent = email;
+  }
+
+  document.getElementById("sendCodeBtn").addEventListener("click", sendCode);
+  emailInput.addEventListener("keydown", e => { if(e.key === "Enter") sendCode(); });
+
+  document.getElementById("verifyBtn").addEventListener("click", verifyCode);
+  document.getElementById("resendLink").addEventListener("click", e => {
+    e.preventDefault();
+    pendingCode = genCode();
+    console.log("%c[Dev & Gamer Toolkit] رمز جديد: " + pendingCode, "color:#2be3ff;font-weight:bold;font-size:14px;");
+    demoCode.textContent = pendingCode;
+    otpError.textContent = "تم إرسال رمز جديد.";
+    otpError.classList.remove("auth-error");
+  });
+  document.getElementById("backLink").addEventListener("click", e => {
+    e.preventDefault();
+    stepOtp.style.display = "none";
+    stepEmail.style.display = "block";
+    document.getElementById("authHeadline").textContent = "تسجيل الدخول عبر البريد الإلكتروني";
+    document.getElementById("authSub").textContent = "أدخل بريدك للحصول على رمز تحقق فوري";
+  });
+
+  otpInputs.forEach((inp, idx) => {
+    inp.addEventListener("input", () => {
+      inp.value = inp.value.replace(/[^0-9]/g, "").slice(0,1);
+      if(inp.value && idx < otpInputs.length - 1){
+        otpInputs[idx+1].focus();
+      }
+    });
+    inp.addEventListener("keydown", e => {
+      if(e.key === "Backspace" && !inp.value && idx > 0){
+        otpInputs[idx-1].focus();
+      }
+      if(e.key === "Enter") verifyCode();
+    });
+    inp.addEventListener("paste", e => {
+      const text = (e.clipboardData || window.clipboardData).getData("text").replace(/[^0-9]/g,"");
+      if(text.length){
+        e.preventDefault();
+        text.split("").slice(0,6).forEach((ch,i) => { if(otpInputs[i]) otpInputs[i].value = ch; });
+        otpInputs[Math.min(text.length,6)-1].focus();
+      }
+    });
+  });
+
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.removeItem(SESSION_KEY);
+    location.reload();
+  });
+
+  // restore session
+  (function restoreSession(){
+    try{
+      const raw = localStorage.getItem(SESSION_KEY);
+      if(raw){
+        const data = JSON.parse(raw);
+        if(data && data.email){
+          enterApp(data.email);
+        }
+      }
+    }catch(e){ /* ignore corrupt session */ }
+  })();
+
+  /* ============================================================
+     TOOL PANEL SWITCHING
+     ============================================================ */
+  const toolCards = document.querySelectorAll(".tool-card");
+  const panels = document.querySelectorAll(".panel");
+
+  function openTool(name){
+    toolCards.forEach(c => c.classList.toggle("active", c.dataset.tool === name));
+    panels.forEach(p => p.classList.toggle("active", p.id === "panel-" + name));
+    document.getElementById("panel-" + name).scrollIntoView({behavior:"smooth", block:"start"});
+  }
+  function closeAllPanels(){
+    toolCards.forEach(c => c.classList.remove("active"));
+    panels.forEach(p => p.classList.remove("active"));
+  }
+  toolCards.forEach(c => c.addEventListener("click", () => openTool(c.dataset.tool)));
+  document.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", closeAllPanels));
+  document.getElementById("scrollTop").addEventListener("click", e => { e.preventDefault(); window.scrollTo({top:0,behavior:"smooth"}); });
+
+  /* ============================================================
+     TOOL 1 — PASSWORD GENERATOR
+     ============================================================ */
+  const pwOutput  = document.getElementById("pwOutput");
+  const pwLength  = document.getElementById("pwLength");
+  const pwLenLabel= document.getElementById("pwLenLabel");
+  const pwUpper   = document.getElementById("pwUpper");
+  const pwNumbers = document.getElementById("pwNumbers");
+  const pwSymbols = document.getElementById("pwSymbols");
+
+  const LOWER = "abcdefghijklmnopqrstuvwxyz";
+  const UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const NUMS  = "0123456789";
+  const SYMS  = "!@#$%^&*()_-+=?";
+
+  function generatePassword(){
+    let pool = LOWER;
+    if(pwUpper.checked) pool += UPPER;
+    if(pwNumbers.checked) pool += NUMS;
+    if(pwSymbols.checked) pool += SYMS;
+    const len = parseInt(pwLength.value, 10);
+    let out = "";
+    const arr = new Uint32Array(len);
+    if(window.crypto && window.crypto.getRandomValues){
+      window.crypto.getRandomValues(arr);
+      for(let i=0;i<len;i++){ out += pool[arr[i] % pool.length]; }
+    } else {
+      for(let i=0;i<len;i++){ out += pool[Math.floor(Math.random()*pool.length)]; }
+    }
+    pwOutput.textContent = out;
+    return out;
+  }
+  pwLength.addEventListener("input", () => { pwLenLabel.textContent = pwLength.value; generatePassword(); });
+  [pwUpper, pwNumbers, pwSymbols].forEach(el => el.addEventListener("change", generatePassword));
+  document.getElementById("pwGenerate").addEventListener("click", generatePassword);
+  document.getElementById("pwRefresh").addEventListener("click", generatePassword);
+  document.getElementById("pwCopy").addEventListener("click", () => copyText(pwOutput.textContent, document.getElementById("pwCopy")));
+
+  function copyText(text, btnEl){
+    navigator.clipboard.writeText(text).then(() => {
+      if(btnEl){
+        const original = btnEl.textContent;
+        btnEl.textContent = "✔";
+        setTimeout(() => btnEl.textContent = original, 1200);
+      }
+    }).catch(() => {});
+  }
+
+  /* ============================================================
+     TOOL 2 — COLOR PICKER
+     ============================================================ */
+  const colorInput  = document.getElementById("colorInput");
+  const colorSwatch = document.getElementById("colorSwatch");
+  const valHex = document.getElementById("valHex");
+  const valRgb = document.getElementById("valRgb");
+  const valHsl = document.getElementById("valHsl");
+
+  function hexToRgb(hex){
+    const n = parseInt(hex.slice(1), 16);
+    return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+  }
+  function rgbToHsl(r,g,b){
+    r/=255; g/=255; b/=255;
+    const max=Math.max(r,g,b), min=Math.min(r,g,b);
+    let h,s,l=(max+min)/2;
+    if(max===min){ h=s=0; }
+    else{
+      const d=max-min;
+      s = l>0.5 ? d/(2-max-min) : d/(max+min);
+      switch(max){
+        case r: h=(g-b)/d+(g<b?6:0); break;
+        case g: h=(b-r)/d+2; break;
+        case b: h=(r-g)/d+4; break;
+      }
+      h/=6;
+    }
+    return { h:Math.round(h*360), s:Math.round(s*100), l:Math.round(l*100) };
+  }
+  function updateColor(){
+    const hex = colorInput.value;
+    const {r,g,b} = hexToRgb(hex);
+    const {h,s,l} = rgbToHsl(r,g,b);
+    colorSwatch.style.background = hex;
+    valHex.textContent = hex.toUpperCase();
+    valRgb.textContent = `rgb(${r},${g},${b})`;
+    valHsl.textContent = `hsl(${h},${s}%,${l}%)`;
+  }
+  colorInput.addEventListener("input", updateColor);
+  document.querySelectorAll("[data-copy]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const el = document.getElementById(btn.dataset.copy);
+      copyText(el.textContent, btn);
+    });
+  });
+
+  /* ============================================================
+     TOOL 3 — TO-DO LIST
+     ============================================================ */
+  const TODO_KEY = "dgt_todos";
+  const todoInput = document.getElementById("todoInput");
+  const todoList  = document.getElementById("todoList");
+
+  function loadTodos(){
+    try{ return JSON.parse(localStorage.getItem(TODO_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function saveTodos(todos){ localStorage.setItem(TODO_KEY, JSON.stringify(todos)); }
+
+  function renderTodos(){
+    const todos = loadTodos();
+    todoList.innerHTML = "";
+    if(todos.length === 0){
+      todoList.innerHTML = '<div class="todo-empty">لا توجد مهام بعد — أضف أول مهمة لك ✨</div>';
+      return;
+    }
+    todos.forEach((t, idx) => {
+      const row = document.createElement("div");
+      row.className = "todo-item";
+      row.innerHTML = `
+        <button class="todo-check ${t.done ? 'done':''}" data-idx="${idx}">${t.done ? '✓' : ''}</button>
+        <span class="todo-text ${t.done ? 'done':''}">${escapeHtml(t.text)}</span>
+        <button class="todo-del" data-idx="${idx}">🗑</button>
+      `;
+      todoList.appendChild(row);
+    });
+  }
+  function escapeHtml(str){
+    const d = document.createElement("div");
+    d.textContent = str;
+    return d.innerHTML;
+  }
+  function addTodo(){
+    const text = todoInput.value.trim();
+    if(!text) return;
+    const todos = loadTodos();
+    todos.unshift({ text, done:false });
+    saveTodos(todos);
+    todoInput.value = "";
+    renderTodos();
+  }
+  document.getElementById("todoAdd").addEventListener("click", addTodo);
+  todoInput.addEventListener("keydown", e => { if(e.key === "Enter") addTodo(); });
+  todoList.addEventListener("click", e => {
+    const idx = e.target.dataset.idx;
+    if(idx === undefined) return;
+    const todos = loadTodos();
+    if(e.target.classList.contains("todo-check")){
+      todos[idx].done = !todos[idx].done;
+      saveTodos(todos);
+      renderTodos();
+    } else if(e.target.classList.contains("todo-del")){
+      todos.splice(idx, 1);
+      saveTodos(todos);
+      renderTodos();
+    }
+  });
+  renderTodos();
+
+  /* ============================================================
+     TOOL 4 — DECISION MAKER
+     ============================================================ */
+  const dmInput  = document.getElementById("dmInput");
+  const dmChips  = document.getElementById("dmChips");
+  const dmResult = document.getElementById("dmResult");
+  const dmPick   = document.getElementById("dmPick");
+  let dmOptions = [];
+
+  function renderChips(){
+    dmChips.innerHTML = "";
+    dmOptions.forEach((opt, idx) => {
+      const chip = document.createElement("div");
+      chip.className = "dm-chip";
+      chip.innerHTML = `<span>${escapeHtml(opt)}</span><button data-idx="${idx}">✕</button>`;
+      dmChips.appendChild(chip);
+    });
+  }
+  function addOption(){
+    const val = dmInput.value.trim();
+    if(!val) return;
+    dmOptions.push(val);
+    dmInput.value = "";
+    renderChips();
+  }
+  document.getElementById("dmAdd").addEventListener("click", addOption);
+  dmInput.addEventListener("keydown", e => { if(e.key === "Enter") addOption(); });
+  dmChips.addEventListener("click", e => {
+    const idx = e.target.dataset.idx;
+    if(idx === undefined) return;
+    dmOptions.splice(idx, 1);
+    renderChips();
+  });
+  document.getElementById("dmSpin").addEventListener("click", () => {
+    if(dmOptions.length === 0){
+      dmPick.textContent = "أضف خيارات أولاً!";
+      dmResult.classList.add("show");
+      return;
+    }
+    const choice = dmOptions[Math.floor(Math.random() * dmOptions.length)];
+    dmPick.textContent = choice;
+    dmResult.classList.remove("show");
+    void dmResult.offsetWidth; // restart animation
+    dmResult.classList.add("show");
+  });
+
+  /* init first color values on load */
+  updateColor();
+})();
+</script>
+</body>
+</html>
